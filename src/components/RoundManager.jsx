@@ -208,12 +208,20 @@ const RoundManager = () => {
             </div>
 
             {currentRound === round && roundStatus === 'active' ? (
-              <button
-                onClick={handleStopRound}
-                className="w-full bg-red-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors"
-              >
-                🛑 Stop Round {round}
-              </button>
+              <div className="space-y-2">
+                <button
+                  onClick={handleStopRound}
+                  className="w-full bg-red-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-700 transition-colors"
+                >
+                  🛑 Stop Round {round}
+                </button>
+                <button
+                  onClick={() => handleStartRound(round)}
+                  className="w-full bg-orange-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-orange-700 transition-colors text-sm"
+                >
+                  🔄 Restart Round {round}
+                </button>
+              </div>
             ) : currentRound < round || (currentRound === round && roundStatus === 'completed') ? (
               <div className="space-y-2">
                 <input

@@ -20,16 +20,8 @@ const TeamCredentials = () => {
   }, []);
 
   const loadTeamStatuses = async () => {
-    const statuses = {};
-    
-    // First, initialize all teams as not logged in and not attended
-    TEAMS.forEach(team => {
-      statuses[team.teamName] = {
-        attended: false,
-        allotted: false,
-        lastLogin: null
-      };
-    });
+    // Keep existing statuses and only update with new data
+    const statuses = { ...teamStatuses };
     
     // ALWAYS try Firebase first for real-time updates
     if (db) {

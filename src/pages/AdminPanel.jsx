@@ -25,8 +25,8 @@ const AdminPanel = () => {
 
     setUseFirebase(!!db);
     loadTeams();
-    // Refresh data every 5 seconds
-    const interval = setInterval(loadTeams, 5000);
+    // Refresh data every 2 seconds for real-time updates
+    const interval = setInterval(loadTeams, 2000);
     return () => clearInterval(interval);
   }, [navigate]);
 
@@ -121,11 +121,9 @@ const AdminPanel = () => {
   };
 
   const calculatePortfolioValue = (teamData) => {
-    const stockValue = (teamData.portfolio || []).reduce(
-      (sum, stock) => sum + (stock.quantity * stock.price), 
-      0
-    );
-    return stockValue + (teamData.currentCapital || 0);
+    const stock1Value = (teamData.stock1Shares || 0) * (teamData.stock1Price || 0);
+    const stock2Value = (teamData.stock2Shares || 0) * (teamData.stock2Price || 0);
+    return (teamData.currentCapital || 0) + stock1Value + stock2Value;
   };
 
   const loadTeamTransactions = async (teamId) => {
@@ -346,15 +344,23 @@ const AdminPanel = () => {
                   <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
                     <div className="bg-white/5 rounded-lg p-2 sm:p-3">
                       <p className="text-gray-300 text-xs sm:text-sm">Initial Capital</p>
-                      <p className="text-lg sm:text-2xl font-bold text-blue-400">${selectedTeam.initialCapital?.toFixed(2)}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-blue-400">₹{selectedTeam.initialCapital?.toFixed(2)}</p>
                     </div>
                     <div className="bg-white/5 rounded-lg p-2 sm:p-3">
-                      <p className="text-gray-300 text-xs sm:text-sm">Available Balance</p>
-                      <p className="text-lg sm:text-2xl font-bold text-green-400">${selectedTeam.currentCapital?.toFixed(2)}</p>
+                      <p className="text-gray-300 text-xs sm:text-sm">Current Capital</p>
+                      <p className="text-lg sm:text-2xl font-bold text-green-400">₹{selectedTeam.currentCapital?.toFixed(2)}</p>
+                    </div>
+                    <div className="bg-white/5 rounded-lg p-2 sm:p-3">
+                      <p className="text-gray-300 text-xs sm:text-sm">Stock 1 Shares</p>
+                      <p className="text-lg sm:text-2xl font-bold text-purple-400">{selectedTeam.stock1Shares || 0}</p>
+                    </div>
+                    <div className="bg-white/5 rounded-lg p-2 sm:p-3">
+                      <p className="text-gray-300 text-xs sm:text-sm">Stock 2 Shares</p>
+                      <p className="text-lg sm:text-2xl font-bold text-pink-400">{selectedTeam.stock2Shares || 0}</p>
                     </div>
                     <div className="bg-white/5 rounded-lg p-2 sm:p-3">
                       <p className="text-gray-300 text-xs sm:text-sm">Portfolio Value</p>
-                      <p className="text-lg sm:text-2xl font-bold text-yellow-400">${selectedTeam.portfolioValue.toFixed(2)}</p>
+                      <p className="text-lg sm:text-2xl font-bold text-yellow-400">₹{selectedTeam.portfolioValue.toFixed(2)}</p>
                     </div>
                   </div>
 
