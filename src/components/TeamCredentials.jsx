@@ -14,8 +14,8 @@ const TeamCredentials = () => {
     setUseFirebase(!!db);
     loadTeamStatuses();
     
-    // Refresh every 5 seconds to check for new logins
-    const interval = setInterval(loadTeamStatuses, 5000);
+    // Refresh every 1 second to check for new logins (real-time updates)
+    const interval = setInterval(loadTeamStatuses, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -31,7 +31,54 @@ const TeamCredentials = () => {
       };
     });
     
-    if (!useFirebase) {
+    // ALWAYS try Firebase first for real-time updates
+    if (db) {
+      try {
+        const teamsRef = collection(db, 'teams');
+        const querySnapshot = await getDocs(teamsRef);
+        
+        querySnapshot.docs.forEach(doc => {
+          const data = doc.data();
+          // Find the team in our pre-defined list
+          const teamExists = TEAMS.find(t => t.teamName === data.teamName);
+          if (teamExists) {
+            statuses[data.teamName] = {
+              attended: data.attended || false,
+              allotted: true, // If exists in Firebase, they've logged in
+              lastLogin: data.lastUpdated || data.createdAt
+            };
+          }
+        });
+
+        // Check attendance markers
+        const attendanceRef = collection(db, 'attendance');
+        const attendanceSnapshot = await getDocs(attendanceRef);
+        attendanceSnapshot.docs.forEach(doc => {
+          const data = doc.data();
+          if (statuses[data.teamName]) {
+            statuses[data.teamName].attended = data.attended;
+          } else {
+            const teamExists = TEAMS.find(t => t.teamName === data.teamName);
+            if (teamExists) {
+              statuses[data.teamName] = {
+                attended: data.attended,
+                allotted: statuses[data.teamName]?.allotted || false,
+                lastLogin: null
+              };
+            }
+          }
+        });
+        
+        setTeamStatuses(statuses);
+        setLastRefresh(new Date());
+        return;
+      } catch (error) {
+        console.error('Error loading team statuses from Firebase:', error);
+      }
+    }
+    
+    // Fallback to localStorage if Firebase not available
+    if (!db) {
       // Load from localStorage
       TEAMS.forEach(team => {
         const teamId = team.teamName.toLowerCase().replace(/\s+/g, '_');
@@ -144,14 +191,18 @@ const TeamCredentials = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl sm:text-2xl font-bold text-white">👥 Team Credentials & Attendance</h2>
         <div className="text-right">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-green-400 text-xs font-medium">Live Updates</span>
+          </div>
           <button
             onClick={loadTeamStatuses}
             className="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700 transition-colors mb-1"
           >
             🔄 Refresh Now
           </button>
-          <p className="text-gray-400 text-xs">Auto-refresh: 5s</p>
-          <p className="text-gray-300 text-xs">Updated: {lastRefresh.toLocaleTimeString()}</p>
+          <p className="text-gray-400 text-xs">Auto: Every 1s</p>
+          <p className="text-gray-300 text-xs">{lastRefresh.toLocaleTimeString()}</p>
         </div>
       </div>
 
