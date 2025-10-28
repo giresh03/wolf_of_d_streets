@@ -33,3 +33,4 @@ dist-ssr
 Graph/*.mp4
 *.mp4
 public/*.mp4
+.vercel

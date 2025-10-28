@@ -80,10 +80,29 @@ const TradingPage = () => {
           ...doc.data()
         }));
         setTransactions(loadedTransactions);
+      } else {
+        // Team data doesn't exist in Firebase yet - set defaults
+        setInitialCapital(10000);
+        setCurrentCapital(10000);
+        setStock1Shares(0);
+        setStock2Shares(0);
+        
+        // Create team data in Firebase
+        await setDoc(teamRef, {
+          teamName: localStorage.getItem('teamName'),
+          initialCapital: 10000,
+          currentCapital: 10000,
+          stock1Shares: 0,
+          stock2Shares: 0,
+          portfolioValue: 10000,
+          totalTransactions: 0,
+          createdAt: new Date().toISOString(),
+          lastUpdated: new Date().toISOString()
+        });
       }
     } catch (error) {
       console.error('Error loading team data:', error);
-      // Fallback to localStorage
+      // Fallback to localStorage or defaults
       const savedData = localStorage.getItem(`teamData_${teamId}`);
       if (savedData) {
         const data = JSON.parse(savedData);
@@ -91,6 +110,12 @@ const TradingPage = () => {
         setCurrentCapital(data.currentCapital || 10000);
         setStock1Shares(data.stock1Shares || 0);
         setStock2Shares(data.stock2Shares || 0);
+      } else {
+        // Set defaults if nothing found
+        setInitialCapital(10000);
+        setCurrentCapital(10000);
+        setStock1Shares(0);
+        setStock2Shares(0);
       }
     }
   };
