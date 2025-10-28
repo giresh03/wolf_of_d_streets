@@ -244,11 +244,12 @@ const AdminPanel = () => {
             <div>
               <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2">🔐 Admin Dashboard</h1>
               <p className="text-purple-200 text-xs sm:text-base">Wolf of D Street - Powered by FYI</p>
-            {!useFirebase && (
-              <p className="text-yellow-400 text-xs sm:text-sm mt-1">
-                ⚠️ Running in demo mode (local storage)
-              </p>
-            )}
+              {!useFirebase && (
+                <p className="text-yellow-400 text-xs sm:text-sm mt-1">
+                  ⚠️ Running in demo mode (local storage)
+                </p>
+              )}
+            </div>
           </div>
           <button
             onClick={handleLogout}
