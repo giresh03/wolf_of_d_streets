@@ -3,9 +3,11 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }) => {
-  const [currentRound, setCurrentRound] = useState(1);
+  const [currentRound, setCurrentRound] = useState(0);
+  const [roundStatus, setRoundStatus] = useState('stopped');
   const [currentVideo, setCurrentVideo] = useState(null);
   const [useFirebase, setUseFirebase] = useState(false);
+  const [showCompletionPopup, setShowCompletionPopup] = useState(false);
   const mainVideoRef = useRef(null);
 
   const roundVideoMapping = {
@@ -16,15 +18,15 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
 
   useEffect(() => {
     setUseFirebase(!!db);
-    loadCurrentRound();
+    loadRoundStatus();
     
-    // Poll for round changes every 3 seconds
-    const interval = setInterval(loadCurrentRound, 3000);
+    // Poll for round changes every 2 seconds
+    const interval = setInterval(loadRoundStatus, 2000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (currentRound && roundVideoMapping[currentRound]) {
+    if (currentRound > 0 && roundVideoMapping[currentRound]) {
       const videoData = roundVideoMapping[currentRound];
       const videoUrl = `/${videoData.file}`;
       setCurrentVideo({
@@ -33,15 +35,24 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
         round: currentRound
       });
       onVideoSelect(videoUrl);
+    } else {
+      setCurrentVideo(null);
+      onVideoSelect('');
     }
   }, [currentRound]);
 
-  const loadCurrentRound = async () => {
+  const loadRoundStatus = async () => {
     if (!useFirebase) {
-      const savedRound = localStorage.getItem('currentRound');
-      if (savedRound) {
-        setCurrentRound(parseInt(savedRound));
+      const savedRound = parseInt(localStorage.getItem('currentRound') || '0');
+      const savedStatus = localStorage.getItem('roundStatus') || 'stopped';
+      
+      // Show completion popup when status changes to completed
+      if (savedStatus === 'completed' && roundStatus === 'active') {
+        setShowCompletionPopup(true);
       }
+      
+      setCurrentRound(savedRound);
+      setRoundStatus(savedStatus);
       return;
     }
 
@@ -49,14 +60,20 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
       const roundRef = doc(db, 'settings', 'currentRound');
       const roundSnap = await getDoc(roundRef);
       if (roundSnap.exists()) {
-        setCurrentRound(roundSnap.data().round || 1);
+        const data = roundSnap.data();
+        const newRound = data.round || 0;
+        const newStatus = data.status || 'stopped';
+        
+        // Show completion popup when status changes to completed
+        if (newStatus === 'completed' && roundStatus === 'active') {
+          setShowCompletionPopup(true);
+        }
+        
+        setCurrentRound(newRound);
+        setRoundStatus(newStatus);
       }
     } catch (error) {
       console.error('Error loading round:', error);
-      const savedRound = localStorage.getItem('currentRound');
-      if (savedRound) {
-        setCurrentRound(parseInt(savedRound));
-      }
     }
   };
 
@@ -72,35 +89,78 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
   };
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 sm:p-6 shadow-xl">
-      {/* Round Header */}
-      <div className="mb-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg sm:text-xl font-bold text-white">🎯 Current Round</h3>
-          <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-4 py-2 rounded-lg">
-            <span className="text-white font-bold">Round {currentRound} / 3</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Current Video Info */}
-      {currentVideo && (
-        <div className="mb-4 p-3 bg-white/5 rounded-lg">
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-white font-medium">{currentVideo.title}</p>
-              <p className="text-gray-400 text-sm">Analyze the stock movements and make your trading decisions</p>
-            </div>
+    <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-6 shadow-xl">
+      {/* Completion Popup */}
+      {showCompletionPopup && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl">
+            <div className="text-6xl mb-4">🎉</div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+              Round {currentRound} Completed!
+            </h2>
+            <p className="text-white text-base sm:text-lg mb-6">
+              {currentRound < 3 
+                ? `Great job! Please wait while the admin prepares Round ${currentRound + 1}.` 
+                : 'All rounds completed! Check the leaderboard for final rankings.'}
+            </p>
+            <button
+              onClick={() => setShowCompletionPopup(false)}
+              className="bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors"
+            >
+              OK, Got It!
+            </button>
           </div>
         </div>
       )}
 
-      {/* Main Video Player */}
-      {currentVideoUrl && (
-        <div className="mt-4">
-          <h4 className="text-white font-medium mb-3">📹 Stock Market Analysis Video</h4>
-          
-          <div className="aspect-video bg-black rounded-lg overflow-hidden mb-3 relative">
+      {/* Round Header */}
+      <div className="mb-3 sm:mb-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+          <h3 className="text-base sm:text-xl font-bold text-white">🎯 Current Round</h3>
+          {currentRound > 0 && (
+            <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-3 sm:px-4 py-2 rounded-lg">
+              <span className="text-white font-bold text-sm sm:text-base">Round {currentRound} / 3</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Round Status Messages */}
+      {currentRound === 0 && roundStatus === 'stopped' && (
+        <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-4 sm:p-6 text-center mb-4">
+          <div className="text-4xl sm:text-5xl mb-3">⏳</div>
+          <p className="text-yellow-200 text-lg sm:text-xl font-bold mb-2">Event Not Started</p>
+          <p className="text-yellow-300 text-sm sm:text-base">
+            Please wait for the admin to start Round 1. The event will begin shortly.
+          </p>
+        </div>
+      )}
+
+      {roundStatus === 'completed' && currentRound > 0 && (
+        <div className="bg-purple-500/20 border border-purple-500 rounded-lg p-4 sm:p-6 text-center mb-4">
+          <div className="text-4xl sm:text-5xl mb-3">✅</div>
+          <p className="text-purple-200 text-lg sm:text-xl font-bold mb-2">
+            Round {currentRound} Completed!
+          </p>
+          <p className="text-purple-300 text-sm sm:text-base">
+            {currentRound < 3 
+              ? `Waiting for admin to start Round ${currentRound + 1}...` 
+              : 'All rounds completed! Check your final portfolio value.'}
+          </p>
+        </div>
+      )}
+
+      {/* Active Round - Video Player */}
+      {currentRound > 0 && roundStatus === 'active' && currentVideo && (
+        <div className="space-y-3 sm:space-y-4">
+          {/* Video Info */}
+          <div className="p-3 bg-white/5 rounded-lg">
+            <p className="text-white font-medium text-sm sm:text-base">{currentVideo.title}</p>
+            <p className="text-gray-400 text-xs sm:text-sm">Analyze the stock movements and make your trading decisions</p>
+          </div>
+
+          {/* Video Player */}
+          <div className="aspect-video bg-black rounded-lg overflow-hidden relative">
             <video
               ref={mainVideoRef}
               src={currentVideoUrl}
@@ -111,14 +171,12 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
               onPlay={() => onPlayPause(true)}
               onPause={() => onPlayPause(false)}
               onSeeking={(e) => {
-                // Prevent seeking by canceling the seek operation
                 e.preventDefault();
                 if (mainVideoRef.current) {
                   mainVideoRef.current.currentTime = mainVideoRef.current.currentTime;
                 }
               }}
               onSeeked={(e) => {
-                // Additional prevention - reset if seeked
                 if (mainVideoRef.current) {
                   const currentTime = mainVideoRef.current.currentTime;
                   if (Math.abs(e.target.currentTime - currentTime) > 0.5) {
@@ -127,7 +185,6 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
                 }
               }}
               onTimeUpdate={() => {
-                // Store the last valid time
                 if (mainVideoRef.current) {
                   mainVideoRef.current.lastValidTime = mainVideoRef.current.currentTime;
                 }
@@ -137,46 +194,34 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
             </video>
             
             {/* Round Overlay */}
-            <div className="absolute top-4 right-4 bg-purple-600/90 px-3 py-1 rounded-lg">
-              <span className="text-white text-sm font-bold">Round {currentRound}</span>
+            <div className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-purple-600/90 px-2 sm:px-3 py-1 rounded-lg">
+              <span className="text-white text-xs sm:text-sm font-bold">Round {currentRound}</span>
             </div>
           </div>
 
-          {/* Custom Play/Pause Controls */}
-          <div className="flex gap-3">
-            <button
-              onClick={handlePlayPause}
-              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
-                isPlaying 
-                  ? 'bg-red-600 hover:bg-red-700 text-white' 
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-            >
-              {isPlaying ? '⏸️ Pause Video' : '▶️ Play Video'}
-            </button>
-          </div>
+          {/* Custom Play/Pause Button */}
+          <button
+            onClick={handlePlayPause}
+            className={`w-full py-3 px-4 rounded-lg font-bold transition-colors text-sm sm:text-base ${
+              isPlaying 
+                ? 'bg-red-600 hover:bg-red-700 text-white' 
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            {isPlaying ? '⏸️ Pause Video' : '▶️ Play Video'}
+          </button>
 
           {/* Trading Instructions */}
-          <div className="mt-4 bg-blue-500/20 border border-blue-500 rounded-lg p-3">
-            <h5 className="text-blue-200 font-medium mb-2">📊 Trading Instructions:</h5>
-            <ul className="text-blue-200 text-sm space-y-1">
-              <li>• <strong>Play/Pause Only:</strong> You can only play or pause the video</li>
-              <li>• <strong>No Scrubbing:</strong> Timeline bar is hidden - you cannot skip forward/backward</li>
-              <li>• Pause the video when you want to analyze the current price</li>
-              <li>• Note the current stock price from the graph</li>
-              <li>• Decide whether to Buy or Sell based on your analysis</li>
-              <li>• Enter the number of shares and execute your trade</li>
-              <li>• Resume the video to see how the market moves</li>
+          <div className="bg-blue-500/20 border border-blue-500 rounded-lg p-3">
+            <h5 className="text-blue-200 font-medium mb-2 text-xs sm:text-sm">📊 Trading Instructions:</h5>
+            <ul className="text-blue-200 text-xs sm:text-sm space-y-1">
+              <li>• <strong>Play/Pause Only:</strong> Timeline hidden - no skipping</li>
+              <li>• Pause when you see good prices on the graph</li>
+              <li>• Enter prices manually for Stock 1 and Stock 2</li>
+              <li>• Enter quantity and click Buy or Sell</li>
+              <li>• Build your portfolio for maximum value!</li>
             </ul>
           </div>
-        </div>
-      )}
-
-      {/* Waiting for Admin Message */}
-      {!currentVideo && (
-        <div className="bg-yellow-500/20 border border-yellow-500 rounded-lg p-6 text-center">
-          <p className="text-yellow-200 text-lg font-bold mb-2">⏳ Waiting for Admin</p>
-          <p className="text-yellow-300 text-sm">The event organizer will start the first round shortly.</p>
         </div>
       )}
     </div>
