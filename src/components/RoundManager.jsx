@@ -74,13 +74,20 @@ const RoundManager = () => {
         startedAt: new Date().toISOString()
       };
 
-      if (useFirebase) {
-        await setDoc(doc(db, 'settings', 'currentRound'), roundData);
-      } else {
-        localStorage.setItem('currentRound', roundNumber.toString());
-        localStorage.setItem('roundStatus', 'active');
-        localStorage.setItem('currentRoundData', JSON.stringify(roundData));
+      // ALWAYS save to BOTH Firebase and localStorage for immediate sync
+      try {
+        if (db) {
+          await setDoc(doc(db, 'settings', 'currentRound'), roundData);
+          console.log('✅ Round saved to Firebase');
+        }
+      } catch (error) {
+        console.error('Firebase save failed:', error);
       }
+      
+      // Always save to localStorage as backup
+      localStorage.setItem('currentRound', roundNumber.toString());
+      localStorage.setItem('roundStatus', 'active');
+      localStorage.setItem('currentRoundData', JSON.stringify(roundData));
 
       setCurrentRound(roundNumber);
       setRoundStatus('active');
@@ -102,12 +109,17 @@ const RoundManager = () => {
           completedAt: new Date().toISOString()
         };
 
-        if (useFirebase) {
-          await setDoc(doc(db, 'settings', 'currentRound'), roundData);
-        } else {
-          localStorage.setItem('roundStatus', 'completed');
-          localStorage.setItem('currentRoundData', JSON.stringify(roundData));
+        // ALWAYS save to BOTH Firebase and localStorage
+        try {
+          if (db) {
+            await setDoc(doc(db, 'settings', 'currentRound'), roundData);
+          }
+        } catch (error) {
+          console.error('Firebase save failed:', error);
         }
+        
+        localStorage.setItem('roundStatus', 'completed');
+        localStorage.setItem('currentRoundData', JSON.stringify(roundData));
 
         setRoundStatus('completed');
         alert(`✅ Round ${currentRound} stopped!\n\nTeams will see completion message.`);

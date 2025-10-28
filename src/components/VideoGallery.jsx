@@ -51,9 +51,40 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
   }, [currentRound, roundStatus]);
 
   const loadRoundStatus = async () => {
-    if (!useFirebase) {
+    // ALWAYS try Firebase first, then fallback to localStorage
+    let roundLoaded = false;
+    
+    if (db) {
+      try {
+        const roundRef = doc(db, 'settings', 'currentRound');
+        const roundSnap = await getDoc(roundRef);
+        if (roundSnap.exists()) {
+          const data = roundSnap.data();
+          const newRound = data.round || 0;
+          const newStatus = data.status || 'stopped';
+          
+          console.log('📊 Loaded from Firebase:', { round: newRound, status: newStatus });
+          
+          // Show completion popup when status changes to completed
+          if (newStatus === 'completed' && roundStatus === 'active') {
+            setShowCompletionPopup(true);
+          }
+          
+          setCurrentRound(newRound);
+          setRoundStatus(newStatus);
+          roundLoaded = true;
+        }
+      } catch (error) {
+        console.error('Firebase read failed, trying localStorage:', error);
+      }
+    }
+    
+    // Fallback to localStorage if Firebase fails
+    if (!roundLoaded) {
       const savedRound = parseInt(localStorage.getItem('currentRound') || '0');
       const savedStatus = localStorage.getItem('roundStatus') || 'stopped';
+      
+      console.log('📊 Loaded from localStorage:', { round: savedRound, status: savedStatus });
       
       // Show completion popup when status changes to completed
       if (savedStatus === 'completed' && roundStatus === 'active') {
@@ -62,27 +93,6 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
       
       setCurrentRound(savedRound);
       setRoundStatus(savedStatus);
-      return;
-    }
-
-    try {
-      const roundRef = doc(db, 'settings', 'currentRound');
-      const roundSnap = await getDoc(roundRef);
-      if (roundSnap.exists()) {
-        const data = roundSnap.data();
-        const newRound = data.round || 0;
-        const newStatus = data.status || 'stopped';
-        
-        // Show completion popup when status changes to completed
-        if (newStatus === 'completed' && roundStatus === 'active') {
-          setShowCompletionPopup(true);
-        }
-        
-        setCurrentRound(newRound);
-        setRoundStatus(newStatus);
-      }
-    } catch (error) {
-      console.error('Error loading round:', error);
     }
   };
 
