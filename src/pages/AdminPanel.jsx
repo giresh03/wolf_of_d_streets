@@ -239,17 +239,14 @@ const AdminPanel = () => {
       <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
-          <div className="flex items-center gap-3">
-            <img src="/fyi-logo.png" alt="FYI" className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg" />
-            <div>
-              <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2">🔐 Admin Dashboard</h1>
-              <p className="text-purple-200 text-xs sm:text-base">Wolf of D Street - Powered by FYI</p>
-              {!useFirebase && (
-                <p className="text-yellow-400 text-xs sm:text-sm mt-1">
-                  ⚠️ Running in demo mode (local storage)
-                </p>
-              )}
-            </div>
+          <div>
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">🔐 Admin Dashboard</h1>
+            <p className="text-purple-200 text-sm sm:text-base">Monitor all teams in real-time</p>
+            {!useFirebase && (
+              <p className="text-yellow-400 text-xs sm:text-sm mt-2">
+                ⚠️ Running in demo mode (local storage)
+              </p>
+            )}
           </div>
           <button
             onClick={handleLogout}

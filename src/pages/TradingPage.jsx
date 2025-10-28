@@ -537,14 +537,11 @@ const TradingPage = () => {
       <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6 sm:mb-8">
-          <div className="flex-1 flex items-center gap-3 sm:gap-4">
-            <img src="/fyi-logo.png" alt="FYI" className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg" />
-            <div>
-              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold text-white mb-1">
-                🐺 Wolf of D Street
-              </h1>
-              <p className="text-blue-300 text-xs sm:text-sm lg:text-base">Powered by FYI</p>
-            </div>
+          <div className="flex-1">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2">
+              🐺 Wolf of D Street
+            </h1>
+            <p className="text-blue-300 text-sm sm:text-base lg:text-lg">Stock Market Trading Simulation</p>
           </div>
           <div className="text-right">
             {!useFirebase && (

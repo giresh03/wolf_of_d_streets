@@ -24,65 +24,69 @@ const AllTransactions = () => {
   };
 
   const loadAllTransactions = async () => {
-    if (!useFirebase) {
-      // Load from localStorage
-      const transactions = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('transactions_')) {
-          const teamTransactions = JSON.parse(localStorage.getItem(key) || '[]');
-          transactions.push(...teamTransactions);
-        }
+    // ALWAYS try Firebase first
+    if (db) {
+      try {
+        const transactionsRef = collection(db, 'transactions');
+        const querySnapshot = await getDocs(transactionsRef);
+        
+        const transactions = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        setAllTransactions(transactions);
+        console.log('📊 Loaded', transactions.length, 'transactions from Firebase');
+        return;
+      } catch (error) {
+        console.error('Error loading transactions:', error);
       }
-      setAllTransactions(transactions.sort((a, b) => 
-        new Date(b.timestamp) - new Date(a.timestamp)
-      ));
-      return;
     }
-
-    try {
-      const transactionsRef = collection(db, 'transactions');
-      const q = query(transactionsRef, orderBy('timestamp', 'desc'));
-      const querySnapshot = await getDocs(q);
-      
-      const transactions = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      setAllTransactions(transactions);
-    } catch (error) {
-      console.error('Error loading transactions:', error);
+    
+    // Fallback to localStorage
+    const transactions = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('transactions_')) {
+        const teamTransactions = JSON.parse(localStorage.getItem(key) || '[]');
+        transactions.push(...teamTransactions);
+      }
     }
+    setAllTransactions(transactions.sort((a, b) => 
+      new Date(b.timestamp) - new Date(a.timestamp)
+    ));
   };
 
   const loadAllTeams = async () => {
-    if (!useFirebase) {
-      const teams = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('teamData_')) {
-          const teamData = JSON.parse(localStorage.getItem(key) || '{}');
-          teams.push(teamData);
-        }
+    // ALWAYS try Firebase first
+    if (db) {
+      try {
+        const teamsRef = collection(db, 'teams');
+        const querySnapshot = await getDocs(teamsRef);
+        
+        const teams = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        setAllTeams(teams);
+        console.log('📊 Loaded', teams.length, 'teams from Firebase');
+        return;
+      } catch (error) {
+        console.error('Error loading teams:', error);
       }
-      setAllTeams(teams);
-      return;
     }
-
-    try {
-      const teamsRef = collection(db, 'teams');
-      const querySnapshot = await getDocs(teamsRef);
-      
-      const teams = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      setAllTeams(teams);
-    } catch (error) {
-      console.error('Error loading teams:', error);
+    
+    // Fallback to localStorage
+    const teams = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('teamData_')) {
+        const teamData = JSON.parse(localStorage.getItem(key) || '{}');
+        teams.push(teamData);
+      }
     }
+    setAllTeams(teams);
   };
 
   const filteredTransactions = filterTeam === 'all' 
