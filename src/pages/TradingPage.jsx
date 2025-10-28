@@ -36,13 +36,16 @@ const TradingPage = () => {
       return;
     }
 
-    setUseFirebase(!!db);
+    const firebaseAvailable = !!db;
+    setUseFirebase(firebaseAvailable);
     setTeamName(savedTeamName);
-    loadTeamData(savedTeamId);
+    
+    // Load team data with Firebase availability check
+    loadTeamDataDirectly(savedTeamId, firebaseAvailable);
   }, [navigate]);
 
-  const loadTeamData = async (teamId) => {
-    if (!useFirebase) {
+  const loadTeamDataDirectly = async (teamId, firebaseAvailable) => {
+    if (!firebaseAvailable) {
       // Use localStorage fallback
       const savedData = localStorage.getItem(`teamData_${teamId}`);
       if (savedData) {
@@ -56,6 +59,25 @@ const TradingPage = () => {
         if (savedTransactions) {
           setTransactions(JSON.parse(savedTransactions));
         }
+      } else {
+        // No data found - set defaults
+        setInitialCapital(10000);
+        setCurrentCapital(10000);
+        setStock1Shares(0);
+        setStock2Shares(0);
+        
+        // Save to localStorage
+        localStorage.setItem(`teamData_${teamId}`, JSON.stringify({
+          teamName: localStorage.getItem('teamName'),
+          initialCapital: 10000,
+          currentCapital: 10000,
+          stock1Shares: 0,
+          stock2Shares: 0,
+          portfolioValue: 10000,
+          totalTransactions: 0,
+          createdAt: new Date().toISOString(),
+          lastUpdated: new Date().toISOString()
+        }));
       }
       return;
     }
