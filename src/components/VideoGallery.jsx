@@ -20,13 +20,13 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
     setUseFirebase(!!db);
     loadRoundStatus();
     
-    // Poll for round changes every 2 seconds
-    const interval = setInterval(loadRoundStatus, 2000);
+    // Poll for round changes every 1 second for immediate updates
+    const interval = setInterval(loadRoundStatus, 1000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (currentRound > 0 && roundVideoMapping[currentRound]) {
+    if (currentRound > 0 && roundStatus === 'active' && roundVideoMapping[currentRound]) {
       const videoData = roundVideoMapping[currentRound];
       const videoUrl = `/${videoData.file}`;
       setCurrentVideo({
@@ -35,11 +35,20 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
         round: currentRound
       });
       onVideoSelect(videoUrl);
-    } else {
-      setCurrentVideo(null);
-      onVideoSelect('');
+      
+      // Auto-play video when round starts
+      setTimeout(() => {
+        if (mainVideoRef.current) {
+          mainVideoRef.current.play().catch(err => console.log('Auto-play prevented:', err));
+        }
+      }, 500);
+    } else if (roundStatus === 'completed' || roundStatus === 'stopped') {
+      // Keep video info but pause
+      if (mainVideoRef.current) {
+        mainVideoRef.current.pause();
+      }
     }
-  }, [currentRound]);
+  }, [currentRound, roundStatus]);
 
   const loadRoundStatus = async () => {
     if (!useFirebase) {
