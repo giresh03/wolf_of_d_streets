@@ -11,7 +11,7 @@ const RoundManager = () => {
     3: 'round3wolf'
   });
 
-  // Map videos to rounds (8 videos for 12 rounds - some reused)
+  // Map videos to rounds - videos are in public folder
   const roundVideoMapping = {
     1: '2cf059d5-20c9-4c11-91dd-ec8598cf8161.mp4',
     2: '805fb6d7-0bd7-4375-a8a5-32bd7888c2c9.mp4',

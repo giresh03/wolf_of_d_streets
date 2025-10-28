@@ -26,7 +26,7 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
   useEffect(() => {
     if (currentRound && roundVideoMapping[currentRound]) {
       const videoData = roundVideoMapping[currentRound];
-      const videoUrl = `/Graph/${videoData.file}`;
+      const videoUrl = `/${videoData.file}`;
       setCurrentVideo({
         url: videoUrl,
         title: videoData.title,
