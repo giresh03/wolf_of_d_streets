@@ -4,7 +4,6 @@ import { collection, getDocs, query, orderBy, doc, updateDoc } from 'firebase/fi
 import { db } from '../firebase';
 import RoundManager from '../components/RoundManager';
 import TeamCredentials from '../components/TeamCredentials';
-import AllTransactions from '../components/AllTransactions';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -260,7 +259,7 @@ const AdminPanel = () => {
         <div className="flex flex-wrap gap-2 mb-6">
           <button
             onClick={() => setActiveTab('rounds')}
-            className={`px-3 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-xs sm:text-base ${
+            className={`px-4 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
               activeTab === 'rounds'
                 ? 'bg-purple-600 text-white'
                 : 'bg-white/10 text-gray-300 hover:bg-white/20'
@@ -270,7 +269,7 @@ const AdminPanel = () => {
           </button>
           <button
             onClick={() => setActiveTab('credentials')}
-            className={`px-3 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-xs sm:text-base ${
+            className={`px-4 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
               activeTab === 'credentials'
                 ? 'bg-purple-600 text-white'
                 : 'bg-white/10 text-gray-300 hover:bg-white/20'
@@ -279,18 +278,8 @@ const AdminPanel = () => {
             👥 Credentials
           </button>
           <button
-            onClick={() => setActiveTab('transactions')}
-            className={`px-3 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-xs sm:text-base ${
-              activeTab === 'transactions'
-                ? 'bg-purple-600 text-white'
-                : 'bg-white/10 text-gray-300 hover:bg-white/20'
-            }`}
-          >
-            📝 Transactions
-          </button>
-          <button
             onClick={() => setActiveTab('leaderboard')}
-            className={`px-3 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-xs sm:text-base ${
+            className={`px-4 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
               activeTab === 'leaderboard'
                 ? 'bg-purple-600 text-white'
                 : 'bg-white/10 text-gray-300 hover:bg-white/20'
@@ -305,9 +294,6 @@ const AdminPanel = () => {
 
         {/* Team Credentials Tab */}
         {activeTab === 'credentials' && <TeamCredentials />}
-
-        {/* All Transactions Tab */}
-        {activeTab === 'transactions' && <AllTransactions />}
 
         {/* Leaderboard Tab */}
         {activeTab === 'leaderboard' && (
