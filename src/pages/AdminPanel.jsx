@@ -309,18 +309,31 @@ const AdminPanel = () => {
                     >
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                          <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-white font-bold text-sm sm:text-base ${
+                            index === 0 ? 'bg-gradient-to-r from-yellow-500 to-yellow-600' :
+                            index === 1 ? 'bg-gradient-to-r from-gray-400 to-gray-500' :
+                            index === 2 ? 'bg-gradient-to-r from-orange-500 to-orange-600' :
+                            'bg-gradient-to-r from-purple-600 to-purple-700'
+                          }`}>
                             {index + 1}
                           </div>
                           <div>
                             <p className="text-white font-bold text-sm sm:text-base">{team.teamName || 'Unnamed Team'}</p>
-                            <p className="text-gray-400 text-xs sm:text-sm">Initial: ${team.initialCapital?.toFixed(2)}</p>
+                            <p className="text-gray-400 text-xs sm:text-sm">
+                              Capital: ₹{team.currentCapital?.toFixed(0) || '0'} | S1: {team.stock1Shares || 0} | S2: {team.stock2Shares || 0}
+                            </p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-green-400 font-bold text-lg sm:text-xl">${team.portfolioValue.toFixed(2)}</p>
-                          <p className="text-gray-400 text-xs sm:text-sm">
-                            {team.portfolioValue > team.initialCapital ? '+' : ''}
+                          <p className={`font-bold text-lg sm:text-xl ${
+                            team.portfolioValue >= team.initialCapital ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            ₹{team.portfolioValue.toFixed(2)}
+                          </p>
+                          <p className={`text-xs sm:text-sm font-semibold ${
+                            team.portfolioValue >= team.initialCapital ? 'text-green-300' : 'text-red-300'
+                          }`}>
+                            {team.portfolioValue >= team.initialCapital ? '📈 +' : '📉 '}
                             {((team.portfolioValue - team.initialCapital) / team.initialCapital * 100).toFixed(1)}%
                           </p>
                         </div>
@@ -381,20 +394,23 @@ const AdminPanel = () => {
                       teamTransactions.map((transaction) => (
                         <div
                           key={transaction.id}
-                          className={`bg-white/5 rounded-lg p-2 sm:p-3 ${
-                            transaction.type === 'buy' ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500'
+                          className={`bg-white/5 rounded-lg p-2 sm:p-3 border-l-4 ${
+                            transaction.stockName === 'Stock 1' ? 'border-purple-500' : 'border-pink-500'
                           }`}
                         >
                           <div className="flex justify-between">
                             <span className={`font-semibold text-xs sm:text-sm ${transaction.type === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
-                              {transaction.type.toUpperCase()}
+                              {transaction.type === 'buy' ? '🟢 BUY' : '🔴 SELL'} - {transaction.stockName || 'Stock'}
                             </span>
                             <span className="text-white text-xs sm:text-sm">
-                              ${transaction.totalCost || transaction.totalRevenue || 0}
+                              {transaction.shares || transaction.quantity} shares
                             </span>
                           </div>
-                          <div className="text-gray-400 text-xs sm:text-sm mt-1">
-                            {transaction.quantity} @ ${transaction.stockPrice} each
+                          <div className="text-gray-400 text-xs mt-1">
+                            @ ₹{transaction.stockPrice} = ₹{(transaction.totalCost || transaction.totalValue || 0).toFixed(2)}
+                          </div>
+                          <div className="text-gray-400 text-xs mt-1">
+                            After: Capital ₹{(transaction.capitalAfter || 0).toFixed(2)} | S1: {transaction.stock1SharesAfter || 0} | S2: {transaction.stock2SharesAfter || 0}
                           </div>
                           <div className="text-gray-500 text-xs mt-1">
                             {new Date(transaction.timestamp).toLocaleString()}
