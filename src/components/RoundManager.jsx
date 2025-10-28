@@ -8,32 +8,14 @@ const RoundManager = () => {
   const [useFirebase, setUseFirebase] = useState(false);
   const [roundPasswords] = useState({
     2: 'round2wolf',
-    3: 'round3wolf',
-    4: 'round4wolf',
-    5: 'round5wolf',
-    6: 'round6wolf',
-    7: 'round7wolf',
-    8: 'round8wolf',
-    9: 'round9wolf',
-    10: 'round10wolf',
-    11: 'round11wolf',
-    12: 'round12wolf'
+    3: 'round3wolf'
   });
 
   // Map videos to rounds (8 videos for 12 rounds - some reused)
   const roundVideoMapping = {
     1: '2cf059d5-20c9-4c11-91dd-ec8598cf8161.mp4',
     2: '805fb6d7-0bd7-4375-a8a5-32bd7888c2c9.mp4',
-    3: '8062ce19-0677-4ad5-85fb-5daf33ef6317.mp4',
-    4: '97821ae6-bdc4-462d-9655-f374378a36b3.mp4',
-    5: '98b3ae38-11e8-455c-80a1-d51415a664e6.mp4',
-    6: 'ad559cb0-0fe5-4a59-b2d1-24bf2fcb98f8.mp4',
-    7: 'c6f70bb2-57ff-4567-a730-465c698db8d9.mp4',
-    8: 'c7df018f-8c8d-41da-b469-2ecd348e446e.mp4',
-    9: '2cf059d5-20c9-4c11-91dd-ec8598cf8161.mp4', // Reuse
-    10: '805fb6d7-0bd7-4375-a8a5-32bd7888c2c9.mp4', // Reuse
-    11: '8062ce19-0677-4ad5-85fb-5daf33ef6317.mp4', // Reuse
-    12: '97821ae6-bdc4-462d-9655-f374378a36b3.mp4' // Reuse
+    3: '8062ce19-0677-4ad5-85fb-5daf33ef6317.mp4'
   };
 
   useEffect(() => {
@@ -151,8 +133,8 @@ const RoundManager = () => {
       </div>
 
       {/* Round Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((round) => (
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        {[1, 2, 3].map((round) => (
           <button
             key={round}
             onClick={() => handleActivateRound(round)}
@@ -178,7 +160,7 @@ const RoundManager = () => {
       </div>
 
       {/* Password Input for Next Round */}
-      {currentRound < 12 && (
+      {currentRound < 3 && (
         <div className="bg-white/5 rounded-lg p-4">
           <h3 className="text-white font-medium mb-3">🔐 Unlock Round {currentRound + 1}</h3>
           <div className="flex gap-3">
@@ -202,10 +184,10 @@ const RoundManager = () => {
         </div>
       )}
 
-      {currentRound === 12 && (
+      {currentRound === 3 && (
         <div className="bg-green-500/20 border border-green-500 rounded-lg p-4 text-center">
           <p className="text-green-200 text-lg font-bold">🎉 Final Round Active!</p>
-          <p className="text-green-300 text-sm mt-1">All 12 rounds completed</p>
+          <p className="text-green-300 text-sm mt-1">All 3 rounds completed</p>
         </div>
       )}
 
@@ -213,9 +195,9 @@ const RoundManager = () => {
       <div className="mt-6 bg-white/5 rounded-lg p-4">
         <h3 className="text-white font-medium mb-2">ℹ️ Round System Info</h3>
         <ul className="text-gray-300 text-sm space-y-1">
-          <li>• Total Rounds: 12</li>
+          <li>• Total Rounds: 3</li>
           <li>• Current Round: {currentRound}</li>
-          <li>• Remaining Rounds: {12 - currentRound}</li>
+          <li>• Remaining Rounds: {3 - currentRound}</li>
           <li>• Only active round video is visible to teams</li>
           <li>• Use password to unlock next round</li>
           <li>• Can go back to previous rounds anytime</li>

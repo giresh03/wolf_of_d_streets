@@ -9,18 +9,9 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
   const mainVideoRef = useRef(null);
 
   const roundVideoMapping = {
-    1: { file: '2cf059d5-20c9-4c11-91dd-ec8598cf8161.mp4', title: 'Market Analysis - Opening Strategies' },
-    2: { file: '805fb6d7-0bd7-4375-a8a5-32bd7888c2c9.mp4', title: 'Technical Indicators' },
-    3: { file: '8062ce19-0677-4ad5-85fb-5daf33ef6317.mp4', title: 'Trading Strategies' },
-    4: { file: '97821ae6-bdc4-462d-9655-f374378a36b3.mp4', title: 'Risk Management' },
-    5: { file: '98b3ae38-11e8-455c-80a1-d51415a664e6.mp4', title: 'Chart Patterns' },
-    6: { file: 'ad559cb0-0fe5-4a59-b2d1-24bf2fcb98f8.mp4', title: 'Market Trends' },
-    7: { file: 'c6f70bb2-57ff-4567-a730-465c698db8d9.mp4', title: 'Volume Analysis' },
-    8: { file: 'c7df018f-8c8d-41da-b469-2ecd348e446e.mp4', title: 'Price Action' },
-    9: { file: '2cf059d5-20c9-4c11-91dd-ec8598cf8161.mp4', title: 'Advanced Market Analysis' },
-    10: { file: '805fb6d7-0bd7-4375-a8a5-32bd7888c2c9.mp4', title: 'Advanced Technical Indicators' },
-    11: { file: '8062ce19-0677-4ad5-85fb-5daf33ef6317.mp4', title: 'Advanced Trading Strategies' },
-    12: { file: '97821ae6-bdc4-462d-9655-f374378a36b3.mp4', title: 'Final Round - Risk Management' }
+    1: { file: '2cf059d5-20c9-4c11-91dd-ec8598cf8161.mp4', title: 'Round 1: Market Analysis & Opening Strategies' },
+    2: { file: '805fb6d7-0bd7-4375-a8a5-32bd7888c2c9.mp4', title: 'Round 2: Technical Indicators & Trends' },
+    3: { file: '8062ce19-0677-4ad5-85fb-5daf33ef6317.mp4', title: 'Round 3: Final Trading Strategies' }
   };
 
   useEffect(() => {
@@ -87,7 +78,7 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
         <div className="flex justify-between items-center">
           <h3 className="text-lg sm:text-xl font-bold text-white">🎯 Current Round</h3>
           <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-4 py-2 rounded-lg">
-            <span className="text-white font-bold">Round {currentRound} / 12</span>
+            <span className="text-white font-bold">Round {currentRound} / 3</span>
           </div>
         </div>
       </div>
