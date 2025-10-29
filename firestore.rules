@@ -13,6 +13,17 @@ service cloud.firestore {
       allow delete: if false; // Prevent deletion of transaction history
     }
     
+    // OC Transactions collection - for Round 2 fake news game
+    match /oc_transactions/{transactionId} {
+      allow read, create, update: if true;
+      allow delete: if false; // Prevent deletion of OC transaction history
+    }
+    
+    // Attendance collection - for team attendance tracking
+    match /attendance/{teamId} {
+      allow read, write: if true;
+    }
+    
     // Admin collection - for future use with proper authentication
     match /admin/{adminId} {
       allow read, write: if false; // Will be secured with auth later

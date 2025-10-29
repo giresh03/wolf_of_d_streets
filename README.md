@@ -23,6 +23,7 @@ A full-stack web application for college club events featuring stock market simu
 - **Team Authentication**: 50 pre-defined teams with credentials
 - **Real-time Trading**: Buy/sell stocks with live portfolio updates
 - **Admin Panel**: Round management, team tracking, leaderboard
+- **OC Portal**: Dedicated interface for organizing committee to manage Round 2 fake news game
 - **Video Integration**: Stock market analysis videos with play/pause controls
 - **Responsive Design**: Works on desktop and mobile devices
 
@@ -35,8 +36,41 @@ A full-stack web application for college club events featuring stock market simu
 
 ## 🎯 Usage
 
-- **Teams**: Login with provided credentials and trade stocks
-- **Admin**: Access admin panel to manage rounds and track teams
+- **Teams**: Login at `/` with provided credentials and trade stocks
+- **Admin**: Access admin panel at `/admin` to manage rounds and track teams
+- **OC Members**: Access OC portal at `/oc` to manage Round 2 fake news game
 - **Event Leads**: Monitor participation and manage competition flow
+
+## 🎮 Portals Overview
+
+### Team Login (`/`)
+- 50 teams with unique credentials
+- Real-time stock trading
+- Portfolio management
+- Transaction history
+
+### Admin Panel (`/admin`)
+- Password: `wolf2024`
+- Round management (12 rounds)
+- Team credentials & attendance
+- Real-time leaderboard
+- Manual price entry
+
+### OC Portal (`/oc`) - NEW!
+- Password: `ocwolf2024`
+- Team credentials display
+- Search and select teams
+- Add/deduct money (±₹300)
+- Round 2 fake news game management
+- Real-time capital updates
+
+## 📚 Documentation
+
+- `OC_PORTAL_GUIDE.md` - Complete OC portal guide
+- `OC_QUICK_REFERENCE.md` - Printable quick reference for event day
+- `OC_CREDENTIALS_REFERENCE.md` - Credentials and tracking sheet
+- `OC_PORTAL_IMPLEMENTATION.md` - Technical implementation details
+- `ADMIN_QUICK_REFERENCE.md` - Admin panel guide
+- `TEAM_CREDENTIALS_REFERENCE.md` - Team credentials list
 
 Built with React, Vite, Tailwind CSS, and Firebase.

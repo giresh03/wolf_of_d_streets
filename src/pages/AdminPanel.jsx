@@ -4,6 +4,7 @@ import { collection, getDocs, query, orderBy, doc, updateDoc } from 'firebase/fi
 import { db } from '../firebase';
 import RoundManager from '../components/RoundManager';
 import TeamCredentials from '../components/TeamCredentials';
+ 
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -460,12 +461,18 @@ const AdminPanel = () => {
         </div>
         )}
 
-        <div className="text-center mt-6 sm:mt-8">
+        <div className="text-center mt-6 sm:mt-8 flex justify-center gap-4">
           <a
             href="/"
             className="text-purple-300 hover:text-purple-200 text-xs sm:text-sm"
           >
-            ← Back to Login Page
+            ← Team Login
+          </a>
+          <a
+            href="/oc"
+            className="text-green-300 hover:text-green-200 text-xs sm:text-sm"
+          >
+            OC Portal →
           </a>
         </div>
       </div>

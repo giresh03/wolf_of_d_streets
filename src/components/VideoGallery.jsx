@@ -128,7 +128,9 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
             >
               OK, Got It!
             </button>
+          
           </div>
+          div
         </div>
       )}
 
@@ -185,7 +187,7 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
               src={currentVideoUrl}
               className="w-full h-full"
               controls
-              controlsList="nodownload nofullscreen noremoteplayback"
+              controlsList="nodownload noremoteplayback"
               preload="metadata"
               onPlay={() => onPlayPause(true)}
               onPause={() => onPlayPause(false)}

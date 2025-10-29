@@ -799,7 +799,7 @@ const TradingPage = () => {
           </div>
 
         {/* Footer Links */}
-        <div className="text-center mt-6 sm:mt-8 flex justify-center gap-4">
+        <div className="text-center mt-6 sm:mt-8 flex justify-center gap-4 flex-wrap">
           <a
             href="/"
             className="text-blue-400 hover:text-blue-300 text-xs sm:text-sm"

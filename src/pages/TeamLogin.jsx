@@ -121,7 +121,13 @@ const TeamLogin = () => {
           </button>
         </form>
 
-        <div className="mt-4 sm:mt-6 text-center">
+        <div className="mt-4 sm:mt-6 flex justify-center gap-4 text-center">
+          <a
+            href="/oc"
+            className="text-green-300 hover:text-green-200 text-xs sm:text-sm"
+          >
+            OC Portal →
+          </a>
           <a
             href="/admin"
             className="text-purple-300 hover:text-purple-200 text-xs sm:text-sm"

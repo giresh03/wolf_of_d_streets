@@ -9,6 +9,7 @@ const TeamCredentials = () => {
   const [filterStatus, setFilterStatus] = useState('all'); // all, attended, not-attended, allotted
   const [useFirebase, setUseFirebase] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [showPasswords, setShowPasswords] = useState(false); // Password visibility toggle
 
   useEffect(() => {
     setUseFirebase(!!db);
@@ -237,6 +238,12 @@ const TeamCredentials = () => {
           <option value="not-attended">Absent Only</option>
           <option value="allotted">Logged In Only</option>
         </select>
+        <button
+          onClick={() => setShowPasswords(!showPasswords)}
+          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm font-semibold whitespace-nowrap"
+        >
+          {showPasswords ? '🔒 Hide Passwords' : '👁️ Show Passwords'}
+        </button>
       </div>
 
       {/* Teams Table */}
@@ -266,7 +273,15 @@ const TeamCredentials = () => {
                 >
                   <td className="px-3 py-3 text-gray-300 text-xs sm:text-sm">{originalIndex + 1}</td>
                   <td className="px-3 py-3 text-white font-medium text-xs sm:text-sm">{team.teamName}</td>
-                  <td className="px-3 py-3 text-gray-300 text-xs sm:text-sm font-mono">{team.password}</td>
+                  <td className="px-3 py-3 text-gray-300 text-xs sm:text-sm font-mono">
+                    {showPasswords ? (
+                      team.password
+                    ) : (
+                      <span className="text-gray-500">
+                        {team.password.split('').map(() => '●').join('')}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-3 py-3">
                     {status.allotted ? (
                       <span className="inline-block bg-purple-500 text-white text-xs px-2 py-1 rounded">

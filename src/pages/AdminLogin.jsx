@@ -50,12 +50,18 @@ const AdminLogin = () => {
           </button>
         </form>
 
-        <div className="mt-4 sm:mt-6 text-center">
+        <div className="mt-4 sm:mt-6 flex justify-center gap-4 text-center">
           <a
             href="/"
             className="text-purple-300 hover:text-purple-200 text-xs sm:text-sm"
           >
-            ← Back to Trading Page
+            ← Team Login
+          </a>
+          <a
+            href="/oc"
+            className="text-green-300 hover:text-green-200 text-xs sm:text-sm"
+          >
+            OC Portal →
           </a>
         </div>
       </div>
