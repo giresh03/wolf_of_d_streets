@@ -192,17 +192,18 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
           <div className="aspect-video bg-black rounded-lg overflow-hidden relative">
             <video
               ref={mainVideoRef}
-              src={currentVideoUrl}
-              key={currentVideo?.url || currentVideoUrl}
+              key={`video-${currentRound}-${currentVideo?.round}`}
               className="w-full h-full"
               controls
-              controlsList="nodownload noremoteplayback"
+              controlsList="nodownload"
               preload="auto"
               playsInline
-              onLoadedData={() => console.log('✅ Video loaded successfully')}
+              crossOrigin="anonymous"
+              onLoadedData={() => console.log('✅ Video loaded:', currentVideo?.url)}
               onError={(e) => {
-                console.error('❌ Video error:', mainVideoRef.current?.error);
-                console.error('Video src:', currentVideoUrl);
+                const error = mainVideoRef.current?.error;
+                console.error('❌ Video error code:', error?.code, 'message:', error?.message);
+                console.error('Trying to load:', currentVideo?.url);
               }}
               onPlay={() => onPlayPause(true)}
               onPause={() => onPlayPause(false)}
@@ -226,6 +227,7 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
                 }
               }}
             >
+              <source src={currentVideo?.url || currentVideoUrl || ''} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             
