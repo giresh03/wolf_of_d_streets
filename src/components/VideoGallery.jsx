@@ -29,6 +29,9 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
     if (currentRound > 0 && roundStatus === 'active' && roundVideoMapping[currentRound]) {
       const videoData = roundVideoMapping[currentRound];
       const videoUrl = `/${videoData.file}`;
+      
+      console.log('🎬 Loading video:', videoUrl, 'for round:', currentRound);
+      
       setCurrentVideo({
         url: videoUrl,
         title: videoData.title,
@@ -36,19 +39,24 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
       });
       onVideoSelect(videoUrl);
       
-      // Auto-play video when round starts
+      // Force video reload and play
       setTimeout(() => {
         if (mainVideoRef.current) {
-          mainVideoRef.current.play().catch(err => console.log('Auto-play prevented:', err));
+          console.log('📹 Setting video src to:', videoUrl);
+          mainVideoRef.current.src = videoUrl;
+          mainVideoRef.current.load();
+          mainVideoRef.current.play().catch(err => {
+            console.log('⏸️ Auto-play prevented:', err);
+          });
         }
-      }, 500);
+      }, 300);
     } else if (roundStatus === 'completed' || roundStatus === 'stopped') {
       // Keep video info but pause
       if (mainVideoRef.current) {
         mainVideoRef.current.pause();
       }
     }
-  }, [currentRound, roundStatus]);
+  }, [currentRound, roundStatus, onVideoSelect]);
 
   const loadRoundStatus = async () => {
     // ALWAYS try Firebase first, then fallback to localStorage
@@ -185,10 +193,17 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
             <video
               ref={mainVideoRef}
               src={currentVideoUrl}
+              key={currentVideo?.url || currentVideoUrl}
               className="w-full h-full"
               controls
               controlsList="nodownload noremoteplayback"
-              preload="metadata"
+              preload="auto"
+              playsInline
+              onLoadedData={() => console.log('✅ Video loaded successfully')}
+              onError={(e) => {
+                console.error('❌ Video error:', mainVideoRef.current?.error);
+                console.error('Video src:', currentVideoUrl);
+              }}
               onPlay={() => onPlayPause(true)}
               onPause={() => onPlayPause(false)}
               onSeeking={(e) => {
