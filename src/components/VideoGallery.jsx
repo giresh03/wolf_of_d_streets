@@ -12,7 +12,7 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
 
   const roundVideoMapping = {
     1: { file: '2cf059d5-20c9-4c11-91dd-ec8598cf8161.mp4', title: 'Round 1: Market Analysis & Opening Strategies' },
-    2: { file: 'round4.mp4', title: 'Round 2: Technical Indicators & Trends' },
+    2: { file: '805fb6d7-0bd7-4375-a8a5-32bd7888c2c9.mp4', title: 'Round 2: Technical Indicators & Trends' },
     3: { file: '8062ce19-0677-4ad5-85fb-5daf33ef6317.mp4', title: 'Round 3: Final Trading Strategies' }
   };
 
