@@ -50,8 +50,30 @@ const OCPortal = () => {
           ...doc.data(),
         }));
 
+        // Build baseline from predefined TEAMS (so all teams appear even if not created yet)
+        const baselineTeams = TEAMS.map((t) => {
+          const id = t.teamName.toLowerCase().replace(/\s+/g, "_");
+          return {
+            id,
+            teamName: t.teamName,
+            initialCapital: 10000,
+            currentCapital: 10000,
+            stock1Shares: 0,
+            stock2Shares: 0,
+            portfolioValue: 10000,
+            totalTransactions: 0,
+          };
+        });
+
+        // Merge Firestore data over baseline
+        const idToTeam = new Map(baselineTeams.map((t) => [t.id, t]));
+        for (const t of loadedTeams) {
+          idToTeam.set(t.id, { ...idToTeam.get(t.id), ...t });
+        }
+        const merged = Array.from(idToTeam.values());
+
         // Sort teams by name
-        const sorted = loadedTeams.sort((a, b) =>
+        const sorted = merged.sort((a, b) =>
           a.teamName?.localeCompare(b.teamName || "")
         );
 
@@ -97,7 +119,23 @@ const OCPortal = () => {
         }
       }
 
-      const sorted = allTeams.sort((a, b) =>
+      // Include predefined teams in demo mode as well
+      const baselineTeams = TEAMS.map((t) => {
+        const id = t.teamName.toLowerCase().replace(/\s+/g, "_");
+        return {
+          id,
+          teamName: t.teamName,
+          initialCapital: 10000,
+          currentCapital: 10000,
+        };
+      });
+      const idToTeam = new Map(baselineTeams.map((t) => [t.id, t]));
+      for (const t of allTeams) {
+        idToTeam.set(t.id, { ...idToTeam.get(t.id), ...t });
+      }
+      const merged = Array.from(idToTeam.values());
+
+      const sorted = merged.sort((a, b) =>
         a.teamName?.localeCompare(b.teamName || "")
       );
 
@@ -135,10 +173,20 @@ const OCPortal = () => {
 
       if (useFirebase) {
         const teamRef = doc(db, "teams", selectedTeam.id);
-        await updateDoc(teamRef, {
-          currentCapital: newCapital,
-          lastUpdated: new Date().toISOString(),
-        });
+        // Ensure doc exists and set new capital
+        await setDoc(
+          teamRef,
+          {
+            teamName: selectedTeam.teamName,
+            initialCapital: selectedTeam.initialCapital ?? 10000,
+            currentCapital: newCapital,
+            stock1Shares: selectedTeam.stock1Shares ?? 0,
+            stock2Shares: selectedTeam.stock2Shares ?? 0,
+            portfolioValue: newCapital,
+            lastUpdated: new Date().toISOString(),
+          },
+          { merge: true }
+        );
 
         // Log the transaction (use setDoc for new documents)
         const transactionId = `${selectedTeam.id}_${Date.now()}`;
@@ -217,10 +265,19 @@ const OCPortal = () => {
 
       if (useFirebase) {
         const teamRef = doc(db, "teams", selectedTeam.id);
-        await updateDoc(teamRef, {
-          currentCapital: newCapital,
-          lastUpdated: new Date().toISOString(),
-        });
+        await setDoc(
+          teamRef,
+          {
+            teamName: selectedTeam.teamName,
+            initialCapital: selectedTeam.initialCapital ?? 10000,
+            currentCapital: newCapital,
+            stock1Shares: selectedTeam.stock1Shares ?? 0,
+            stock2Shares: selectedTeam.stock2Shares ?? 0,
+            portfolioValue: newCapital,
+            lastUpdated: new Date().toISOString(),
+          },
+          { merge: true }
+        );
       } else {
         // Update in localStorage
         const teamData = JSON.parse(
