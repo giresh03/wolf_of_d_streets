@@ -211,6 +211,7 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
               preload="auto"
               playsInline
               disablePictureInPicture
+              muted={false}
               onLoadedData={() => console.log('✅ Video ready to play')}
               onCanPlay={() => console.log('✅ Video can play')}
               onError={(e) => {
