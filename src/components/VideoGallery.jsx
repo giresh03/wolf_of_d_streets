@@ -20,8 +20,8 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
     setUseFirebase(!!db);
     loadRoundStatus();
     
-    // Poll for round changes every 1 second for immediate updates
-    const interval = setInterval(loadRoundStatus, 1000);
+    // Poll for round changes every 3 seconds (optimized for 50 users)
+    const interval = setInterval(loadRoundStatus, 3000);
     return () => clearInterval(interval);
   }, []);
 
@@ -39,17 +39,15 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
       });
       onVideoSelect(videoUrl);
       
-      // Force video reload and play
+      // Load video when round starts (DON'T autoplay to avoid issues)
       setTimeout(() => {
         if (mainVideoRef.current) {
-          console.log('📹 Setting video src to:', videoUrl);
+          console.log('📹 Loading video:', videoUrl);
           mainVideoRef.current.src = videoUrl;
           mainVideoRef.current.load();
-          mainVideoRef.current.play().catch(err => {
-            console.log('⏸️ Auto-play prevented:', err);
-          });
+          console.log('✅ Video loaded, click Play to start');
         }
-      }, 300);
+      }, 200);
     } else if (roundStatus === 'completed' || roundStatus === 'stopped') {
       // Keep video info but pause
       if (mainVideoRef.current) {
@@ -71,7 +69,10 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
           const newRound = data.round || 0;
           const newStatus = data.status || 'stopped';
           
-          console.log('📊 Loaded from Firebase:', { round: newRound, status: newStatus });
+          // Only log when round changes to reduce console spam
+          if (newRound !== currentRound || newStatus !== roundStatus) {
+            console.log('📊 Round changed:', { round: newRound, status: newStatus });
+          }
           
           // Show completion popup when status changes to completed
           if (newStatus === 'completed' && roundStatus === 'active') {
@@ -92,7 +93,10 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
       const savedRound = parseInt(localStorage.getItem('currentRound') || '0');
       const savedStatus = localStorage.getItem('roundStatus') || 'stopped';
       
-      console.log('📊 Loaded from localStorage:', { round: savedRound, status: savedStatus });
+      // Only log when values change
+      if (savedRound !== currentRound || savedStatus !== roundStatus) {
+        console.log('📊 Using localStorage:', { round: savedRound, status: savedStatus });
+      }
       
       // Show completion popup when status changes to completed
       if (savedStatus === 'completed' && roundStatus === 'active') {
@@ -104,14 +108,23 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
     }
   };
 
-  const handlePlayPause = () => {
-    if (mainVideoRef.current) {
+  const handlePlayPause = async () => {
+    if (!mainVideoRef.current) return;
+    
+    try {
       if (isPlaying) {
         mainVideoRef.current.pause();
+        // State update happens in onPause handler
       } else {
-        mainVideoRef.current.play();
+        await mainVideoRef.current.play();
+        // State update happens in onPlay handler
       }
-      onPlayPause(!isPlaying);
+    } catch (error) {
+      console.error('Play/Pause error:', error);
+      // If play fails, update state manually
+      if (!isPlaying) {
+        onPlayPause(false);
+      }
     }
   };
 
@@ -138,7 +151,6 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
             </button>
           
           </div>
-          div
         </div>
       )}
 
@@ -194,19 +206,27 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
               ref={mainVideoRef}
               key={`video-${currentRound}-${currentVideo?.round}`}
               className="w-full h-full"
-              controls
-              controlsList="nodownload"
+              controls={false}
+              controlsList="nodownload nofullscreen noremoteplayback"
               preload="auto"
               playsInline
-              crossOrigin="anonymous"
-              onLoadedData={() => console.log('✅ Video loaded:', currentVideo?.url)}
+              disablePictureInPicture
+              onLoadedData={() => console.log('✅ Video ready to play')}
+              onCanPlay={() => console.log('✅ Video can play')}
               onError={(e) => {
                 const error = mainVideoRef.current?.error;
-                console.error('❌ Video error code:', error?.code, 'message:', error?.message);
-                console.error('Trying to load:', currentVideo?.url);
+                console.error('❌ Video error:', error?.code, error?.message);
               }}
-              onPlay={() => onPlayPause(true)}
-              onPause={() => onPlayPause(false)}
+              onPlay={() => {
+                console.log('▶️ Video playing');
+                onPlayPause(true);
+              }}
+              onPause={() => {
+                console.log('⏸️ Video paused');
+                onPlayPause(false);
+              }}
+              onWaiting={() => console.log('⏳ Buffering...')}
+              onPlaying={() => console.log('✅ Playback started')}
               onSeeking={(e) => {
                 e.preventDefault();
                 if (mainVideoRef.current) {

@@ -26,8 +26,8 @@ const AdminPanel = () => {
 
     setUseFirebase(!!db);
     loadTeams();
-    // Refresh data every 2 seconds for real-time updates
-    const interval = setInterval(loadTeams, 2000);
+    // Refresh data every 5 seconds (optimized for 50 users to reduce Firebase load)
+    const interval = setInterval(loadTeams, 5000);
     return () => clearInterval(interval);
   }, [navigate]);
 
