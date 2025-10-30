@@ -90,15 +90,16 @@ const TeamLogin = () => {
 
         <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
           <div>
-            <label className="block text-white mb-2 font-medium text-sm sm:text-base">Team Name</label>
+            <label className="block text-white mb-2 font-medium text-sm sm:text-base">Team ID</label>
             <input
               type="text"
               value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-              className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-              placeholder="Enter your team name"
+              onChange={(e) => setTeamName(e.target.value.toUpperCase())}
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg bg-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base uppercase"
+              placeholder="Enter Team ID (e.g., 25BVD1010)"
               required
             />
+            <p className="text-blue-300 text-xs mt-1">Enter your Team ID from the credentials sheet</p>
           </div>
 
           <div>
@@ -140,10 +141,10 @@ const TeamLogin = () => {
         <div className="mt-6 sm:mt-8 bg-blue-500/20 border border-blue-500 rounded-lg p-3 sm:p-4">
           <h3 className="text-blue-200 font-medium mb-2 text-sm sm:text-base">📋 Instructions:</h3>
           <ul className="text-blue-200 text-xs sm:text-sm space-y-1">
-            <li>• Use the credentials provided by event organizers</li>
-            <li>• Each team has a unique team name and password</li>
+            <li>• Enter your Team ID (e.g., 25BVD1010) and password</li>
+            <li>• Find credentials on the sheet given by organizers</li>
             <li>• You'll get ₹10,000 initial capital to start</li>
-            <li>• Trade 2 stocks across 12 rounds</li>
+            <li>• Trade 2 stocks across 3 rounds</li>
             <li>• Highest portfolio value wins!</li>
           </ul>
         </div>
