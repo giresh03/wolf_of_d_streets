@@ -113,7 +113,7 @@ const OCPortal = () => {
 
   const ensureTeamDoc = async (teamId, teamName) => {
     if (!db) return;
-    const teamRef = doc(db, 'teams', teamId.toLowerCase());
+    const teamRef = doc(db, "teams", teamId.toLowerCase());
     const snap = await getDoc(teamRef);
     if (!snap.exists()) {
       await setDoc(teamRef, {
@@ -137,7 +137,26 @@ const OCPortal = () => {
       setCheckInTeam(null);
       return;
     }
-    const sheetTeam = findTeamFromSheet(id);
+    // Consolidate by Team ID (duo/trio)
+    const sheetTeam = (() => {
+      const matches = TEAMS.filter(
+        (t) => t.teamId.toUpperCase() === id.toUpperCase()
+      );
+      if (matches.length === 0) return null;
+      const memberNames = matches
+        .map((m) => (m.teamName || '').trim())
+        .filter(Boolean);
+      const teamLabel = memberNames.join(', ');
+      const { password, internalId } = matches[0];
+      return {
+        teamId: matches[0].teamId.toUpperCase(),
+        teamName: teamLabel || matches[0].teamId.toUpperCase(),
+        password: password || `wolf${internalId || 10000}`,
+        internalId: internalId || null,
+        members: memberNames,
+        size: memberNames.length,
+      };
+    })();
     if (!sheetTeam) {
       setCheckInTeam({ notFound: true, teamId: id });
       return;
@@ -145,7 +164,7 @@ const OCPortal = () => {
     try {
       await ensureTeamDoc(sheetTeam.teamId, sheetTeam.teamName);
     } catch (e) {
-      console.error('ensureTeamDoc error:', e);
+      console.error("ensureTeamDoc error:", e);
     }
     setCheckInTeam(sheetTeam);
   };
@@ -156,21 +175,28 @@ const OCPortal = () => {
     try {
       const id = checkInTeam.teamId.toLowerCase();
       if (db) {
-        await setDoc(doc(db, 'attendance', id), {
+        await setDoc(doc(db, "attendance", id), {
           teamId: checkInTeam.teamId,
           teamName: checkInTeam.teamName,
           attended: true,
           timestamp: new Date().toISOString(),
         });
-        const teamRef = doc(db, 'teams', id);
-        await setDoc(teamRef, { attended: true, lastUpdated: new Date().toISOString() }, { merge: true });
+        const teamRef = doc(db, "teams", id);
+        await setDoc(
+          teamRef,
+          { attended: true, lastUpdated: new Date().toISOString() },
+          { merge: true }
+        );
       } else {
         localStorage.setItem(
           `attendance_${checkInTeam.teamId}`,
-          JSON.stringify({ attended: true, timestamp: new Date().toISOString() })
+          JSON.stringify({
+            attended: true,
+            timestamp: new Date().toISOString(),
+          })
         );
         const key = `teamData_${checkInTeam.teamId.toLowerCase()}`;
-        const existing = JSON.parse(localStorage.getItem(key) || '{}');
+        const existing = JSON.parse(localStorage.getItem(key) || "{}");
         localStorage.setItem(
           key,
           JSON.stringify({
@@ -184,13 +210,15 @@ const OCPortal = () => {
           })
         );
       }
-      alert(`✅ Marked present: ${checkInTeam.teamId} - ${checkInTeam.teamName}`);
-      setTeamIdSearch('');
+      alert(
+        `✅ Marked present: ${checkInTeam.teamId} - ${checkInTeam.teamName}`
+      );
+      setTeamIdSearch("");
       setCheckInTeam(null);
       loadTeams();
     } catch (e) {
-      console.error('Mark present failed:', e);
-      alert('❌ Failed to mark attendance.');
+      console.error("Mark present failed:", e);
+      alert("❌ Failed to mark attendance.");
     } finally {
       setIsCheckingIn(false);
     }
@@ -380,11 +408,11 @@ const OCPortal = () => {
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
           <button
-            onClick={() => setActiveTab('attendance')}
+            onClick={() => setActiveTab("attendance")}
             className={`px-4 sm:px-6 py-2 rounded-lg font-semibold transition-colors text-sm sm:text-base ${
-              activeTab === 'attendance'
-                ? 'bg-green-600 text-white'
-                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              activeTab === "attendance"
+                ? "bg-green-600 text-white"
+                : "bg-white/10 text-gray-300 hover:bg-white/20"
             }`}
           >
             🟢 Quick Check-In
@@ -412,18 +440,29 @@ const OCPortal = () => {
         </div>
 
         {/* Attendance Quick Check-In */}
-        {activeTab === 'attendance' && (
+        {activeTab === "attendance" && (
           <div className="bg-white/10 backdrop-blur-md rounded-lg p-4 sm:p-6 shadow-xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">🪪 Team ID Check-In</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">
+              🪪 Team ID Check-In
+            </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
               <div className="md:col-span-2">
-                <label className="block text-white mb-2 font-medium text-sm sm:text-base">Enter / Scan Team ID</label>
+                <label className="block text-white mb-2 font-medium text-sm sm:text-base">
+                  Enter / Scan Team ID
+                </label>
                 <input
                   type="text"
                   value={teamIdSearch}
-                  onChange={(e) => setTeamIdSearch(e.target.value.toUpperCase())}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleTeamIdSearch(); } }}
+                  onChange={(e) =>
+                    setTeamIdSearch(e.target.value.toUpperCase())
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleTeamIdSearch();
+                    }
+                  }}
                   className="w-full px-4 py-3 rounded-lg bg-white/20 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm sm:text-base uppercase"
                   placeholder="e.g., 25BVD1010"
                 />
@@ -441,15 +480,26 @@ const OCPortal = () => {
                 <div className="flex flex-col sm:flex-row justify-between gap-4">
                   <div>
                     <p className="text-gray-300 text-sm">Team ID</p>
-                    <p className="text-white text-xl font-bold">{checkInTeam.teamId}</p>
+                    <p className="text-white text-xl font-bold">
+                      {checkInTeam.teamId}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-gray-300 text-sm">Team Name (members)</p>
-                    <p className="text-white text-xl font-bold">{checkInTeam.teamName}</p>
+                    <p className="text-gray-300 text-sm">Team Name</p>
+                    <p className="text-white text-xl font-bold">
+                      {checkInTeam.teamName}
+                    </p>
+                    {checkInTeam.members?.length > 0 && (
+                      <p className="text-gray-300 text-xs mt-1">
+                        Members ({checkInTeam.size}): {checkInTeam.members.join(', ')}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <p className="text-gray-300 text-sm">Password</p>
-                    <p className="text-green-300 text-xl font-bold select-all">{checkInTeam.password}</p>
+                    <p className="text-green-300 text-xl font-bold select-all">
+                      {checkInTeam.password}
+                    </p>
                   </div>
                 </div>
 
@@ -462,7 +512,10 @@ const OCPortal = () => {
                     ✅ Mark Present
                   </button>
                   <button
-                    onClick={() => { setTeamIdSearch(''); setCheckInTeam(null); }}
+                    onClick={() => {
+                      setTeamIdSearch("");
+                      setCheckInTeam(null);
+                    }}
                     className="bg-gray-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-700"
                   >
                     ✖ Clear
@@ -473,7 +526,8 @@ const OCPortal = () => {
 
             {checkInTeam?.notFound && (
               <div className="mt-4 bg-red-500/20 border border-red-500 rounded-lg p-4 text-red-200">
-                ❌ Team ID not found in sheet: {checkInTeam.teamId}. Please verify.
+                ❌ Team ID not found in sheet: {checkInTeam.teamId}. Please
+                verify.
               </div>
             )}
           </div>
