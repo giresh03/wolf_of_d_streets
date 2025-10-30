@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, getDocs, query, orderBy, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { TEAMS } from '../data/teams';
 import RoundManager from '../components/RoundManager';
 import TeamCredentials from '../components/TeamCredentials';
  
@@ -43,9 +44,27 @@ const AdminPanel = () => {
           ...doc.data(),
           portfolioValue: calculatePortfolioValue(doc.data())
         }));
+        // Build baseline from predefined TEAMS, then merge Firestore over it so all teams show
+        const baselineTeams = TEAMS.map(t => {
+          const id = t.teamName.toLowerCase().replace(/\s+/g, '_');
+          const base = {
+            id,
+            teamName: t.teamName,
+            initialCapital: 10000,
+            currentCapital: 10000,
+            stock1Shares: 0,
+            stock2Shares: 0,
+          };
+          return { ...base, portfolioValue: calculatePortfolioValue(base) };
+        });
+        const idToTeam = new Map(baselineTeams.map(t => [t.id, t]));
+        for (const t of loadedTeams) {
+          idToTeam.set(t.id, { ...idToTeam.get(t.id), ...t });
+        }
+        const merged = Array.from(idToTeam.values());
 
         // Sort teams
-        const sorted = loadedTeams.sort((a, b) => {
+        const sorted = merged.sort((a, b) => {
           if (sortBy === 'portfolioValue') {
             return b.portfolioValue - a.portfolioValue;
           } else if (sortBy === 'teamName') {
@@ -80,9 +99,27 @@ const AdminPanel = () => {
           });
         }
       }
-      
+      // Include predefined teams as baseline in local mode
+      const baselineTeams = TEAMS.map(t => {
+        const id = t.teamName.toLowerCase().replace(/\s+/g, '_');
+        const base = {
+          id,
+          teamName: t.teamName,
+          initialCapital: 10000,
+          currentCapital: 10000,
+          stock1Shares: 0,
+          stock2Shares: 0,
+        };
+        return { ...base, portfolioValue: calculatePortfolioValue(base) };
+      });
+      const idToTeam = new Map(baselineTeams.map(t => [t.id, t]));
+      for (const t of allTeams) {
+        idToTeam.set(t.id, { ...idToTeam.get(t.id), ...t });
+      }
+      const merged = Array.from(idToTeam.values());
+
       // Sort teams
-      const sorted = allTeams.sort((a, b) => {
+      const sorted = merged.sort((a, b) => {
         if (sortBy === 'portfolioValue') {
           return b.portfolioValue - a.portfolioValue;
         } else if (sortBy === 'teamName') {
