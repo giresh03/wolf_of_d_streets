@@ -63,6 +63,28 @@ export const TEAMS = [
   { teamName: "Team Meteor", password: "wolf2024meteor" },
   { teamName: "Team Nebula", password: "wolf2024nebula" },
   { teamName: "Team Quantum", password: "wolf2024quantum" },
+  // Additional 10 teams (batch 2)
+  { teamName: "Team Aurora", password: "wolf2024aurora" },
+  { teamName: "Team Bolt", password: "wolf2024bolt" },
+  { teamName: "Team Cosmos", password: "wolf2024cosmos" },
+  { teamName: "Team Eclipse", password: "wolf2024eclipse" },
+  { teamName: "Team Galaxy", password: "wolf2024galaxy" },
+  { teamName: "Team Horizon", password: "wolf2024horizon" },
+  { teamName: "Team Inferno", password: "wolf2024inferno" },
+  { teamName: "Team Javelin", password: "wolf2024javelin" },
+  { teamName: "Team Kestrel", password: "wolf2024kestrel" },
+  { teamName: "Team Lightning", password: "wolf2024lightning" },
+  // Additional 10 teams (batch 3)
+  { teamName: "Team Matrix", password: "wolf2024matrix" },
+  { teamName: "Team Nexus", password: "wolf2024nexus" },
+  { teamName: "Team Odyssey", password: "wolf2024odyssey" },
+  { teamName: "Team Pulse", password: "wolf2024pulse" },
+  { teamName: "Team Quasar", password: "wolf2024quasar" },
+  { teamName: "Team Rift", password: "wolf2024rift" },
+  { teamName: "Team Solaris", password: "wolf2024solaris" },
+  { teamName: "Team Tempest", password: "wolf2024tempest" },
+  { teamName: "Team Umbra", password: "wolf2024umbra" },
+  { teamName: "Team Vertex", password: "wolf2024vertex" },
 ];
 
 // Helper function to check if credentials are valid
