@@ -30,30 +30,24 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
       const videoData = roundVideoMapping[currentRound];
       const videoUrl = `/${videoData.file}`;
       
-      console.log('🎬 Loading video:', videoUrl, 'for round:', currentRound);
-      
-      setCurrentVideo({
-        url: videoUrl,
-        title: videoData.title,
-        round: currentRound
-      });
-      onVideoSelect(videoUrl);
-      
-      // Video will load automatically via src prop, just need to call load()
-      setTimeout(() => {
-        if (mainVideoRef.current) {
-          console.log('📹 Loading video:', videoUrl);
-          mainVideoRef.current.load();
-          console.log('✅ Video loaded, click Play to start');
-        }
-      }, 100);
+      // Only update if video actually changed
+      if (currentVideo?.url !== videoUrl) {
+        console.log('🎬 Loading new video:', videoUrl, 'for round:', currentRound);
+        
+        setCurrentVideo({
+          url: videoUrl,
+          title: videoData.title,
+          round: currentRound
+        });
+        onVideoSelect(videoUrl);
+      }
     } else if (roundStatus === 'completed' || roundStatus === 'stopped') {
-      // Keep video info but pause
-      if (mainVideoRef.current) {
+      // Pause video when round completes
+      if (mainVideoRef.current && !mainVideoRef.current.paused) {
         mainVideoRef.current.pause();
       }
     }
-  }, [currentRound, roundStatus, onVideoSelect]);
+  }, [currentRound, roundStatus]);
 
   const loadRoundStatus = async () => {
     // ALWAYS try Firebase first, then fallback to localStorage
