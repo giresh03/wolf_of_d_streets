@@ -29,6 +29,10 @@ const RoundManager = () => {
   useEffect(() => {
     setUseFirebase(!!db);
     loadRoundStatus();
+    
+    // Auto-refresh every 3 seconds for admin
+    const interval = setInterval(loadRoundStatus, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   const loadRoundStatus = async () => {
