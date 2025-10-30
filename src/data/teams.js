@@ -1,71 +1,65 @@
-// Teams data from attendance sheet for Wolf of D Street event
-// Format: { teamId, teamName (members), password, internalId }
+// Pre-defined teams for Wolf of D Street event
+// These are the only teams that can login to the system
 
 export const TEAMS = [
-  // Format: Team ID is used for login, Team Name shows members
-  { teamId: '25BVD1010', teamName: 'Deepak P', password: 'wolf2096', internalId: 2096 },
-  { teamId: '25BVD1170', teamName: 'Tamil anmuc sathyasanjai', password: 'wolf2096', internalId: 2096 },
-  { teamId: '24BVD1031', teamName: 'CHOUGULE atharva.chougule', password: 'wolf3686', internalId: 3686 },
-  { teamId: '24BVD1051', teamName: 'Bhavir Bhavir kalpeshbhavir', password: 'wolf3686', internalId: 3686 },
-  { teamId: '25BMH119', teamName: 'V S RAGAV ragavshank', password: 'wolf7437', internalId: 7437 },
-  { teamId: '25BMH119', teamName: 'AKASH MATH akash.math', password: 'wolf7437', internalId: 7437 },
-  { teamId: '25BAI1071', teamName: 'NETHRA viwe nethra.viwe', password: 'wolf9122', internalId: 9122 },
-  { teamId: '25BCE1227', teamName: 'G RIDHANY ridhanya.g', password: 'wolf9122', internalId: 9122 },
-  { teamId: '25BPS1026', teamName: 'PRATEERTH prateerthartha', password: 'wolf8728', internalId: 8728 },
-  { teamId: '25BPS1049', teamName: 'SHIVAM SH shivam.singh', password: 'wolf8728', internalId: 8728 },
-  { teamId: '25BAI1517', teamName: 'SHANTANU shantanu.s', password: 'wolf9369', internalId: 9369 },
-  { teamId: '25BAI1612', teamName: 'DARSH MA darsh.math', password: 'wolf9369', internalId: 9369 },
-  { teamId: '25BCE1467', teamName: 'ARJUN KAR arjun.karth', password: 'wolf9389', internalId: 9389 },
-  { teamId: '25BCE1592', teamName: 'PRADYUM pradyum.r', password: 'wolf9389', internalId: 9389 },
-  { teamId: '25BCE1778', teamName: 'NAVEENA P naveenap', password: 'wolf9108', internalId: 9108 },
-  { teamId: '25BCE1960', teamName: 'R SANAAN sanaanth.r2', password: 'wolf9108', internalId: 9108 },
-  { teamId: '25BCE1407', teamName: 'PAWAN S pavan.saran', password: 'wolf8934', internalId: 8934 },
-  { teamId: '25BEC1073', teamName: 'B SAI VIGN saivignesh.b', password: 'wolf8934', internalId: 8934 },
-  { teamId: '25BVD1012', teamName: 'AADI SING mahi.verma', password: 'wolf7732', internalId: 7732 },
-  { teamId: '25BVD105C', teamName: 'R V GURU G gururishtr', password: 'wolf7732', internalId: 7732 },
-  { teamId: '25BAI1071', teamName: 'NETHRA viw nethra.viwe', password: 'wolf9227', internalId: 9227 },
-  { teamId: '25BCE1227', teamName: 'G RIDHANY ridhanya.g', password: 'wolf9227', internalId: 9227 },
-  { teamId: '24BLC1190', teamName: 'ARGHADWI arghadwip.', password: 'wolf9573', internalId: 9573 },
-  { teamId: '24BLC1256', teamName: 'Ayandi se ayandi.sen', password: 'wolf9573', internalId: 9573 },
-  { teamId: '24BLC1175', teamName: 'ARNAV GU arnav.gupt', password: 'wolf9584', internalId: 9584 },
-  { teamId: '24BLC1251', teamName: 'V V SRI SAT srisaikohi', password: 'wolf9584', internalId: 9584 },
-  { teamId: '24BCE1806', teamName: 'SHUBHRA shubhrane', password: 'wolf9540', internalId: 9540 },
-  { teamId: '24BRS1369', teamName: 'AYUSHI SIN ayushi.singh', password: 'wolf9540', internalId: 9540 },
-  { teamId: '25BCE1727', teamName: 'AMAN KHA aman.frin', password: 'wolf11288', internalId: 11288 },
-  { teamId: '25BDS1228', teamName: 'ARYA SANT arya.santos', password: 'wolf11288', internalId: 11288 },
-  { teamId: '24BRS1123', teamName: 'ANIKET PR aniket.pras', password: 'wolf11002', internalId: 11002 },
-  { teamId: '24BRS1327', teamName: 'PRUTHVI K pruthvi.ka', password: 'wolf11002', internalId: 11002 },
-  { teamId: '25BCE1449', teamName: 'AKANKSHA akanksha.ra', password: 'wolf11384', internalId: 11384 },
-  { teamId: '25BDS1017', teamName: 'SREEJA GH shreeja.ghos', password: 'wolf11384', internalId: 11384 },
-  { teamId: '25BRS1099', teamName: 'TARIKA DE tarika.dewe', password: 'wolf11558', internalId: 11558 },
-  { teamId: '25BVB1042', teamName: 'SWEETY SIN sweety.sing', password: 'wolf11558', internalId: 11558 },
-  { teamId: '25BEC1258', teamName: 'AKHAN R S akhan.rs20', password: 'wolf10038', internalId: 10038 },
-  { teamId: '25BEC1279', teamName: '', password: 'wolf10038', internalId: 10038 },
-  { teamId: '25BEC1253', teamName: '', password: 'wolf10038', internalId: 10038 },
-  { teamId: '25BEC1289', teamName: '', password: 'wolf10038', internalId: 10038 },
-  { teamId: '24BHI573', teamName: '', password: 'wolf10038', internalId: 10038 },
-  { teamId: '24BCE5473', teamName: 'PAARTH RA paarth.khu', password: 'wolf11550', internalId: 11550 },
-  { teamId: '25BCE1322', teamName: 'NIKHIL J nikhil.j2025', password: 'wolf11574', internalId: 11574 },
-  { teamId: '25BPS1034', teamName: 'R YUVNANS yuvnanshr', password: 'wolf11574', internalId: 11574 },
-  { teamId: '24BPS1081', teamName: 'PRIYANSHU priyanshu.r', password: 'wolf11755', internalId: 11755 },
-  { teamId: '24BRS1184', teamName: 'VARUN VA varun.vada', password: 'wolf11755', internalId: 11755 },
-  { teamId: '23BLC1073', teamName: 'VEDANT SI vedant.sing', password: 'wolf11819', internalId: 11819 },
-  { teamId: '23BLC1093', teamName: 'RACHNA M rachna.mor', password: 'wolf11819', internalId: 11819 },
-  { teamId: '24BCE1152', teamName: 'POTNURI D arnolp.d', password: 'wolf11822', internalId: 11822 }
-  // Add more teams as needed from your spreadsheet
+  { teamName: 'Team Alpha', password: 'wolf2024alpha' },
+  { teamName: 'Team Beta', password: 'wolf2024beta' },
+  { teamName: 'Team Gamma', password: 'wolf2024gamma' },
+  { teamName: 'Team Delta', password: 'wolf2024delta' },
+  { teamName: 'Team Epsilon', password: 'wolf2024epsilon' },
+  { teamName: 'Team Zeta', password: 'wolf2024zeta' },
+  { teamName: 'Team Eta', password: 'wolf2024eta' },
+  { teamName: 'Team Theta', password: 'wolf2024theta' },
+  { teamName: 'Team Iota', password: 'wolf2024iota' },
+  { teamName: 'Team Kappa', password: 'wolf2024kappa' },
+  { teamName: 'Team Lambda', password: 'wolf2024lambda' },
+  { teamName: 'Team Mu', password: 'wolf2024mu' },
+  { teamName: 'Team Nu', password: 'wolf2024nu' },
+  { teamName: 'Team Xi', password: 'wolf2024xi' },
+  { teamName: 'Team Omicron', password: 'wolf2024omicron' },
+  { teamName: 'Team Pi', password: 'wolf2024pi' },
+  { teamName: 'Team Rho', password: 'wolf2024rho' },
+  { teamName: 'Team Sigma', password: 'wolf2024sigma' },
+  { teamName: 'Team Tau', password: 'wolf2024tau' },
+  { teamName: 'Team Upsilon', password: 'wolf2024upsilon' },
+  { teamName: 'Team Phi', password: 'wolf2024phi' },
+  { teamName: 'Team Chi', password: 'wolf2024chi' },
+  { teamName: 'Team Psi', password: 'wolf2024psi' },
+  { teamName: 'Team Omega', password: 'wolf2024omega' },
+  { teamName: 'Team Phoenix', password: 'wolf2024phoenix' },
+  { teamName: 'Team Dragon', password: 'wolf2024dragon' },
+  { teamName: 'Team Tiger', password: 'wolf2024tiger' },
+  { teamName: 'Team Eagle', password: 'wolf2024eagle' },
+  { teamName: 'Team Falcon', password: 'wolf2024falcon' },
+  { teamName: 'Team Hawk', password: 'wolf2024hawk' },
+  { teamName: 'Team Lion', password: 'wolf2024lion' },
+  { teamName: 'Team Panther', password: 'wolf2024panther' },
+  { teamName: 'Team Leopard', password: 'wolf2024leopard' },
+  { teamName: 'Team Cheetah', password: 'wolf2024cheetah' },
+  { teamName: 'Team Jaguar', password: 'wolf2024jaguar' },
+  { teamName: 'Team Cobra', password: 'wolf2024cobra' },
+  { teamName: 'Team Viper', password: 'wolf2024viper' },
+  { teamName: 'Team Python', password: 'wolf2024python' },
+  { teamName: 'Team Anaconda', password: 'wolf2024anaconda' },
+  { teamName: 'Team Shark', password: 'wolf2024shark' },
+  { teamName: 'Team Orca', password: 'wolf2024orca' },
+  { teamName: 'Team Dolphin', password: 'wolf2024dolphin' },
+  { teamName: 'Team Whale', password: 'wolf2024whale' },
+  { teamName: 'Team Kraken', password: 'wolf2024kraken' },
+  { teamName: 'Team Titan', password: 'wolf2024titan' },
+  { teamName: 'Team Atlas', password: 'wolf2024atlas' },
+  { teamName: 'Team Zeus', password: 'wolf2024zeus' },
+  { teamName: 'Team Thor', password: 'wolf2024thor' },
+  { teamName: 'Team Odin', password: 'wolf2024odin' },
+  { teamName: 'Team Apex', password: 'wolf2024apex' }
 ];
 
-// Helper function to validate credentials by Team ID
-export const validateTeamCredentials = (teamId, password) => {
-  const team = TEAMS.find(t => t.teamId === teamId);
-  if (!team) return { valid: false, message: 'Team ID not found' };
+// Helper function to check if credentials are valid
+export const validateTeamCredentials = (teamName, password) => {
+  const team = TEAMS.find(t => t.teamName === teamName);
+  if (!team) return { valid: false, message: 'Team name not found' };
   if (team.password !== password) return { valid: false, message: 'Incorrect password' };
   return { valid: true, team };
-};
-
-// Helper function to get team by ID
-export const getTeamById = (teamId) => {
-  return TEAMS.find(t => t.teamId === teamId);
 };
 
 // Helper function to get team by name
@@ -74,6 +68,6 @@ export const getTeamByName = (teamName) => {
 };
 
 // Helper function to check if team exists
-export const teamExists = (teamId) => {
-  return TEAMS.some(t => t.teamId === teamId);
+export const teamExists = (teamName) => {
+  return TEAMS.some(t => t.teamName === teamName);
 };
