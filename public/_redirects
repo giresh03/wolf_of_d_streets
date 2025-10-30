@@ -1,0 +1,7 @@
+# Serve static files first, then SPA routing
+/*.mp4 200
+/*.webm 200
+/*.jpg 200
+/*.png 200
+/*  /index.html 200
+
