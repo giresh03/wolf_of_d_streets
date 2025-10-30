@@ -14,7 +14,8 @@ const OCPortal = () => {
   const [reason, setReason] = useState('');
   const [useFirebase, setUseFirebase] = useState(false);
   const [teamStatuses, setTeamStatuses] = useState({});
-  const [activeTab, setActiveTab] = useState('credentials'); // credentials, money
+  const [activeTab, setActiveTab] = useState('attendance'); // attendance, credentials, money
+  const [teamIdSearch, setTeamIdSearch] = useState('');
 
   useEffect(() => {
     // Check authentication
