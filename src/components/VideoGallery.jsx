@@ -39,15 +39,14 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
       });
       onVideoSelect(videoUrl);
       
-      // Load video when round starts (DON'T autoplay to avoid issues)
+      // Video will load automatically via src prop, just need to call load()
       setTimeout(() => {
         if (mainVideoRef.current) {
           console.log('📹 Loading video:', videoUrl);
-          mainVideoRef.current.src = videoUrl;
           mainVideoRef.current.load();
           console.log('✅ Video loaded, click Play to start');
         }
-      }, 200);
+      }, 100);
     } else if (roundStatus === 'completed' || roundStatus === 'stopped') {
       // Keep video info but pause
       if (mainVideoRef.current) {
@@ -204,6 +203,7 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
           <div className="aspect-video bg-black rounded-lg overflow-hidden relative">
             <video
               ref={mainVideoRef}
+              src={currentVideo?.url || currentVideoUrl || ''}
               key={`video-${currentRound}-${currentVideo?.round}`}
               className="w-full h-full"
               controls={false}
@@ -211,7 +211,6 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
               preload="auto"
               playsInline
               disablePictureInPicture
-              muted={false}
               onLoadedData={() => console.log('✅ Video ready to play')}
               onCanPlay={() => console.log('✅ Video can play')}
               onError={(e) => {
@@ -248,7 +247,6 @@ const VideoGallery = ({ onVideoSelect, currentVideoUrl, onPlayPause, isPlaying }
                 }
               }}
             >
-              <source src={currentVideo?.url || currentVideoUrl || ''} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
             
