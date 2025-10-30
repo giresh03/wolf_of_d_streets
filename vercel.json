@@ -1,8 +1,4 @@
 {
-  "rewrites": [
-    {
-      "source": "/((?!.*\\.(mp4|webm|jpg|jpeg|png|gif|svg|ico|css|js|woff|woff2|ttf|eot|pdf|json)).*)",
-      "destination": "/index.html"
-    }
-  ]
+  "cleanUrls": true,
+  "trailingSlash": false
 }
